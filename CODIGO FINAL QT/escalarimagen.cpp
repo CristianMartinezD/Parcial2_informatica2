@@ -1,37 +1,34 @@
-#include <iostream>
-#include <QImage>
-#include <vector>
-//#include <list>
-#include <map>
-//#include <fstream>
-#include <escalarimagen.h>
+#include "escalarimagen.h"
 
 
-using namespace std;
 
-int main()
+EscalarImagen::EscalarImagen(QImage ima)
 {
-    string rutaImagen = "../Parcial2/imagenes/usa.png";
-    QImage imagen(rutaImagen.c_str()); //Este es un constructor para cargar la imagen.
+    imagen = ima;
+    numfilas = imagen.height();
+    numcolumnas = imagen.width();
+    fstream archivo;
+    archivo.open("matriz.txt", ios::out);
+    archivo<<"int MATRIZ[3][64] = {\n";
+    archivo.close();
+    for(int capa = 0; capa < 3; capa++) reducirmatrices(capa);
+}
 
-    EscalarImagen imagencita(imagen);
 
-/*
-    int numfilas = imagen.height();
-    int numcolumnas = imagen.width();
 
-    map<int, vector<int>> matrizrojo;
-    cout<<numcolumnas<<", "<<numfilas<<endl;
 
+void EscalarImagen::reducirmatrices(int capa)
+{
     cout<<"\n\nCOPIANDO MATRIZ DEL ROJO....\n"<<endl;
     for(int indx = 0; indx < numfilas; indx++){
         vector<int> A;
         for(int indy = 0; indy < numcolumnas; indy++){
-           A.push_back(imagen.pixelColor(indy,indx).red());
+            if(capa == 0) A.push_back(imagen.pixelColor(indy,indx).red());
+            else if(capa == 1) A.push_back(imagen.pixelColor(indy,indx).green());
+            else A.push_back(imagen.pixelColor(indy,indx).blue());
         }
         matrizrojo[indx] = A;
     }
-
 
 
     cout<<"\n\nREDUCIENDO FILAS DE LA MATRIZ DEL ROJO...."<<endl;
@@ -87,7 +84,7 @@ int main()
     for(iterador2 = matrizrojo.begin(); iterador2 != matrizrojo.end(); iterador2++){
         vector<int> vect;
         for(int j = 0; j < iterador2->second.size(); j++){
-            if(j % 2 != 0) vect.push_back(iterador2->second[j]);
+            if(j % 2 == 0) vect.push_back(iterador2->second[j]);
         }
         MATRIZR.push_back(vect);
     }
@@ -129,95 +126,22 @@ int main()
         cout<<endl;
     }
 
-*/
 
-
- /*
-
-
-///////////////////////////////////////////////////////
-    cout<<"\n\nIMPRIMIENDO MATRIZ ESCALADA:\n"<<endl;
-    vector<int> capaR;
-    vector<int> capaV;
-    vector<int> capaA;
-    QImage imagencita = imagen.scaled(QSize(8,8)); //Pude haber puesto solo scaled(8,8);
-    for(int indx = 0; indx < imagencita.height(); indx++){
-        cout<<"{";
-        for(int indy = 0; indy < imagencita.width(); indy++){
-            capaR.push_back(imagencita.pixelColor(indy,indx).red());
-            cout<<imagencita.pixelColor(indy,indx).red()<<" "; //imprimiendo capa del rojo
-        }
-        cout<<"}";
+    fstream archivo;
+    archivo.open("matriz.txt", ios::out | ios::in |ios::app);
+    if(archivo.is_open()){
+        cout<<"\nCONSTRUYENDO ARCHIVO.....\n";
+        archivo<<"{";
+        int i = 0;
+        for(auto it : MATRIZR){
+            for(int j = 0; j < 8; j++){
+                if(i != 0 & i!= 64)archivo<<",";
+                i++;
+                archivo<<(it[j]);
+             }
+         }
+        if(capa != 2) archivo<<"},\n";
+        if(capa == 2) archivo<<"}\n};";
+        archivo.close();
     }
-
-    cout<<endl;
-    for(int indx = 0; indx < imagencita.height(); indx++){
-        cout<<"{";
-        for(int indy = 0; indy < imagencita.width(); indy++){
-            capaV.push_back(imagencita.pixelColor(indy,indx).green());
-            cout<<imagencita.pixelColor(indy,indx).green()<<" "; //imprimiendo capa del verde
-        }
-        cout<<"}";
-    }
-
-
-    cout<<endl;
-    for(int indx = 0; indx < imagencita.height(); indx++){
-        cout<<"{";
-        for(int indy = 0; indy < imagencita.width(); indy++){
-            capaA.push_back(imagencita.pixelColor(indy,indx).blue());
-            cout<<imagencita.pixelColor(indy,indx).blue()<<" "; //imprimiendo capa del Azul
-        }
-        cout<<"}";
-    }
-
-    /////
-     Una vez que ya tenga los tres vectores, los guardo en archivo de texto asi:
-     int MATRIZ[3][cantidad de leds de la matriz (8*8)] = {
-     {ROJO},
-     {VERDE},
-     {AZUL}
-     };
-     Y COPIO ESE CONTENIDO A TINKERCAD.
-     Para ello hago lo siguiente:
-    /////
-
-
-*/
-//    fstream archivo;
-//    archivo.open("matriz.txt", ios::out);
-//    if(archivo.is_open()){
-//        archivo<<"int MATRIZ[3][cantidad de leds de la matriz (8*8)] = {\n";
-
-//        archivo<<"{";
-//        for(int j = 0; j<8*8; j++){
-//           if(j != 0 & j!= 64)archivo<<",";
-//           archivo<<(capaR[j]);
-//        }
-//        archivo<<"},\n";
-
-//        archivo<<"{";
-//        for(int j = 0; j<8*8; j++){
-//           if(j != 0 & j!= 64)archivo<<",";
-//           archivo<<(capaV[j]);
-//        }
-//        archivo<<"},\n";
-
-
-//        archivo<<"{";
-//        for(int j = 0; j<8*8; j++){
-//           if(j != 0 & j!= 64)archivo<<",";
-//           archivo<<(capaA[j]);
-//        }
-//        archivo<<"}\n};";
-
-//        archivo.close();
-
-//    }
-
-
-
-
-    cout<<endl;
-    return 0;
 }

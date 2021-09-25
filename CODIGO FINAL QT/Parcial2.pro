@@ -4,4 +4,8 @@ CONFIG -= app_bundle
 #CONFIG -= qt
 
 SOURCES += \
+        escalarimagen.cpp \
         main.cpp
+
+HEADERS += \
+    escalarimagen.h
