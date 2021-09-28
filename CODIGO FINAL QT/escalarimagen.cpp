@@ -1,8 +1,7 @@
 #include "escalarimagen.h"
 
 
-
-EscalarImagen::EscalarImagen(QImage ima)
+escalarimagen::escalarimagen(QImage ima)
 {
     imagen = ima;
     numfilas = imagen.height();
@@ -12,128 +11,68 @@ EscalarImagen::EscalarImagen(QImage ima)
     archivo<<"int MATRIZ[3][64] = {\n";
     archivo.close();
     for(int capa = 0; capa < 3; capa++) reducirmatrices(capa);
+
 }
 
 
 
 
-void EscalarImagen::reducirmatrices(int capa)
+void escalarimagen::reducirmatrices(int capa)
 {
-    cout<<"\n\nCOPIANDO MATRIZ DEL ROJO....\n"<<endl;
+    vector<vector<int>> matriz;
     for(int indx = 0; indx < numfilas; indx++){
         vector<int> A;
         for(int indy = 0; indy < numcolumnas; indy++){
-            if(capa == 0) A.push_back(imagen.pixelColor(indy,indx).red());
-            else if(capa == 1) A.push_back(imagen.pixelColor(indy,indx).green());
-            else A.push_back(imagen.pixelColor(indy,indx).blue());
+           if(capa == 0) A.push_back(imagen.pixelColor(indy,indx).red());
+           else if(capa == 1) A.push_back(imagen.pixelColor(indy,indx).green());
+           else A.push_back(imagen.pixelColor(indy,indx).blue());
         }
-        matrizrojo[indx] = A;
+        matriz.push_back(A);
     }
 
 
-    cout<<"\n\nREDUCIENDO FILAS DE LA MATRIZ DEL ROJO...."<<endl;
-    map<int, vector<int>>::iterator iterador;
-    int contador = 0;
-    while(matrizrojo.size() >= 16){
-    for(iterador = matrizrojo.begin(); iterador != matrizrojo.end(); iterador++){
-        if(contador % 2 == 0){
-            map<int, vector<int>>::iterator temporal = iterador;
-            ++iterador;
-            matrizrojo.erase(temporal);
-        }
+    int MATRIZDELEDS[8][8];
 
-        contador++;
+    int suma = 0, promedio = 0, cantidad = 0;  //DEFINICION DE ALGUNAS VARIABLES.
+    int j = 0, n = 1;
+    int conta = 0;
+    int b = 1, c = 2;
 
-    }
-    cout<<matrizrojo.size()<<endl;
 
-    }
 
-    cout<<"\n\nTERMINANDO DE REDUCIR ALGUNAS FILAS QUE NO PUDIERON SER REDUCIDAS....\n"<<endl;
-    int centro;
-    while(matrizrojo.size() > 8){
-        matrizrojo.erase(iterador =  matrizrojo.begin());
+    for(int a = 0; a < 7; a++){
+    conta = 0, n = 1, j = 0, suma = 0, promedio = 0, cantidad = 0;
 
-        if(matrizrojo.size() > 8) matrizrojo.erase(--(iterador =  matrizrojo.end()));
+    while(conta < 8){
 
-        centro = matrizrojo.size() / 2;
-        if(matrizrojo.size() > 8){
-            for(iterador =  matrizrojo.begin(); iterador != matrizrojo.end(); iterador++){
-                centro--;
-                if(centro == 0){
-                    iterador++;
-                    matrizrojo.erase(iterador);
-                }
-            }
+    for(int i = (numfilas/8)*b; i < (numfilas/8)*c; i++){
+        for(j = j+0; j < (numcolumnas/8)*n; j++){
+            suma += matriz[i][j];
+            cantidad++;
         }
     }
-
-    cout<<"\n\nIMPRIMIENDO LAS 8 FILAS QUE QUEDARON:\n"<<endl;
-    map<int, vector<int>>::iterator iterador2;
-    for(iterador2 = matrizrojo.begin(); iterador2 != matrizrojo.end(); iterador2++){
-        cout<<"{"<<endl;
-        for(int i = 0; i < numcolumnas; i++){
-            cout<<iterador2->second[i]<<" ";
-        }
-        cout<<"}"<<endl;
+    promedio = suma / cantidad;
+    MATRIZDELEDS[a][n-1] = promedio;
+    n++;
+    conta++;
+    suma = 0, promedio = 0, cantidad = 0;
     }
 
-    cout<<"\n\nCOPIANDO LAS 8 FILAS DEL ROJO EN UNA LISTA....\n"<<endl;
-    iterador2 = matrizrojo.begin();
-    list<vector<int>> MATRIZR;
-    for(iterador2 = matrizrojo.begin(); iterador2 != matrizrojo.end(); iterador2++){
-        vector<int> vect;
-        for(int j = 0; j < iterador2->second.size(); j++){
-            if(j % 2 == 0) vect.push_back(iterador2->second[j]);
-        }
-        MATRIZR.push_back(vect);
+    b++;
+    c++;
+
     }
 
 
-    cout<<"\n\nREDUCIENDO EL NUMERO DE COLUMNAS QUE TIENE CADA UNA DE LAS 8 FILAS....\n"<<endl;
-    while(MATRIZR.begin()->size() >= 16){
-    list<vector<int>> auxiliar;
-    for(auto it : MATRIZR){
-        vector<int> vect;
-        for(int j = 0; j < it.size(); j++){
-            if(j % 2 != 0) vect.push_back(it[j]);
-        }
-        auxiliar.push_back(vect);
-    }
-    MATRIZR = auxiliar;
-
-    }
-
-    cout<<"\n\nTERMINANDO DE REDUCIR EL NUMERO DE COLUMNAS....\n"<<endl;
-    list<vector<int>>::iterator iter = MATRIZR.begin();
-    for(iter = MATRIZR.begin(); iter != MATRIZR.end(); iter++){
-        while(iter->size() > 8){
-            cout<<"entro:"<<endl;
-            iter->erase(iter->begin());
-            if(iter->size() > 8) iter->erase(iter->end()-1);
-            centro = iter->size() / 2;
-            if(iter->size() > 8) iter->erase(iter->begin() + centro);
-
-        }
-    }
-
-
-    cout<<"IMPRIMIENDO LISTA:"<<endl;
-    for(auto it : MATRIZR){
-        for(int j = 0; j < it.size(); j++){
-             cout<<it[j]<<" ";
-        }
-        cout<<endl;
-    }
+    for(int k = 0; k < 8; k++) MATRIZDELEDS[7][k] = MATRIZDELEDS[6][k];
 
 
     fstream archivo;
     archivo.open("matriz.txt", ios::out | ios::in |ios::app);
     if(archivo.is_open()){
-        cout<<"\nCONSTRUYENDO ARCHIVO.....\n";
         archivo<<"{";
         int i = 0;
-        for(auto it : MATRIZR){
+        for(auto it : MATRIZDELEDS){
             for(int j = 0; j < 8; j++){
                 if(i != 0 & i!= 64)archivo<<",";
                 i++;
@@ -144,4 +83,5 @@ void EscalarImagen::reducirmatrices(int capa)
         if(capa == 2) archivo<<"}\n};";
         archivo.close();
     }
+
 }
