@@ -3,24 +3,20 @@
 
 #include <iostream>
 #include <QImage>
-#include <map>
 #include <vector>
 #include <fstream>
 
-
-
 using namespace std;
-class EscalarImagen
+
+
+class escalarimagen
 {
 private:
     QImage imagen;
     int numfilas;
     int numcolumnas;
-    map<int, vector<int>> matrizrojo;
-    map<int, vector<int>> matrizverde;
-    map<int, vector<int>> matrizazul;
 public:
-    EscalarImagen(QImage ima);
+    escalarimagen(QImage ima);
     void reducirmatrices(int capa);
 };
 
