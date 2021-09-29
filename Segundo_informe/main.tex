@@ -1,0 +1,84 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{listings}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{cite}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+            
+        \Huge
+        \textbf{Informe de implementacion}
+            
+        \vspace{0.5cm}
+        \LARGE
+        Parcial 2 de informatica.
+            
+        \vspace{1.5cm}
+            
+        \text
+        
+        
+        \textbf{Cristian Martinez De La Ossa}
+        
+            
+        \vfill
+            
+        \vspace{0.8cm}
+            
+        \Large
+        Despartamento de Ingeniería Electrónica y Telecomunicaciones\\
+        Universidad de Antioquia\\
+        Medellín\\
+        Septiembre de 2021
+            
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+\section{Introducción}\label{intro}
+Después de haber analizado el problema a resolver en este parcial, pude percibir varias estrategias que podían darle solución a dicho problema, así que comencé primeramente a realizar pruebas de escritorio para validar mis ideas. Entre las diferentes ideas que se me pasaban por la mente, dos de ellas fueron muy acertada a lo que estaba buscando. A continuación, voy a describir cuales fueron esas ideas y como las implemente.
+
+
+\section{implementación de las ideas} \label{contenido}
+SUBMUESTREO.\\
+La primera idea que tuve fue con respecto al submuestreo, mi propuesta fue cargar la imagen primeramente, para ello hago uso de la clase QImage, acto seguido cargo cada una de las tres capas de colores rojo, verde y azul en una matriz con dimensiones mxn, donde m y n las puedo determinar gracias a los métodos height() y width() de la clase QImage.\\
+Una vez que ya tengo la matriz de los colores rojo, verde y azul, le aplico la siguiente técnica a cada una.\\
+Primero divido la matriz en pequeños bloques que tengan un área rectangular con las siguientes dimensiones:\\
+Alto = (CANTIDAD DE FILAS DE LA MATRIZ)/16\\
+Ancho = (CANTIDAD DE COLUMNAS DE LA MATRIZ)/16\\
+Tal como se muestra en la siguiente figura.
+
+\begin{figure}[h]\centering
+\includegraphics[scale=0.45]{metodo.PNG}
+\caption{Imagen para ilustrar metodo}
+\label{imagen-qfb}
+\end{figure}
+
+Luego recorro cada bloquecito con un doble for() y cuento cuantos pixeles tiene. Al mismo tiempo voy sumando las intensidades de cada color en dicho bloque para así sacar el promedio de ese respectivo color en ese bloque. Finalmente el promedio que obtenga para cada color en cada bloque, será  lo que voy a colocar en mi matriz de leds de tinkercad.
+\newpage
+
+SOBREMUESTREO.\\
+Para el sobremuestreo lo que hago es tomar las matrices anteriormente descritas, la del rojo, verde y azul, y duplicar sus filas y columnas hasta que tanto las filas como las columnas sean mayores a 16( Puesto que mi matriz de leds será de 16x16). Eso lo hago con usando bucles while y for, una vez que se ha cumplido ese objetivo entonces aplico el método de submuestreo descrito anteriormente, el cual me arroja la matriz final de 16x16.\\
+
+\section{Clases y Contenedores Usados}
+En mi codigo de qt hise uso de las siguientes clases y contenedores para realizar las diferentes tareas que implico el proceso descrito anteriormente.\\
+Use la clase QImage para cargar y leer la imagen, de esa clase utilice el método pixelcolor, tambien hise uso del contenedor vector, con el cual cree un vector que contiene a otros vectores, lo cual me permite tener una matriz donde las filas son cada vector que hay dentro del vector superior.\\
+Ademas utilice la clase iostream que siempre es necesaria y la clase fstream para crear el archivo de texto donde se guarda la matriz para los leds.\\
+De igual forma hise uso de una clase que yo mismo cree llamada escalarimagen, en esa clase tengo tres atributos(dos int y uno de tipo QImage), un metodo llamado reducirmatrices que se encarga de leer los pixeles de la imagen, contruir una matriz para los colores, reducir dicha matriz utilizando el metodo anteriormente descrito y al final construye el archivo con los datos que van para tikercad.\\
+En mi clase hay un constructor que recibe la imagen que es cargada en el main y la almacena en un atributo de la clase para que pueda ser usada por el metodo reducirmatrices, tambien se inicializan los demas atributos, se crea el archivo de texto para tenerlo listo para ser usado mas adelante y se invoca a la funcion reducirimagen para que haga su trabajo.
+
+\newpage
+\section{Estructura del circuito}
+Mi circuito lo arme con tiras de 16 neopixeles para asi sacar una matriz de 16X16, basicamente utilice 16 tiras, un arduino el cual configure en el puerto 0, para salida. Cada tira de led esta unida a la anterior de acuerdo la documentacion que hay sobre las tiras y de acuerdo a lo que he aprendido en clases con los profesores.\\
+Con respecto a inconvenientes que haya tenido al resolver este trabajo, creo que es unico inconveniete mas relevante fue que al principio no me encendianlos leds de la matriz, pero me di cuenta que era porque debia cambiar el tipo de datos de mi matriz, que lo tenia en int y debia ponerlo en byte, de esa forma se soluciono el inconveniente.
+\section{Conclusión}
+Pienso que este parcial ha sido un reto  para demostrar mis conocimientos adquiridos hasta el momento y considero que es muy importante para mi crecimiento profesional. Creo que no estuvo tan facil, pero tampoco muy dificil, ademas me motivo mucho a investigar sobre el tema de como estan hechas las imagenes. En general considero que hise un buen trabajo.
+
+\end{document}
